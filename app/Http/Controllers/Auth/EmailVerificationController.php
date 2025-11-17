@@ -24,7 +24,7 @@ class EmailVerificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return $this->errorResponse(
                 'Email already verified.',
-                400
+                409
             );
         }
 

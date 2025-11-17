@@ -31,9 +31,11 @@ class RegisterService
 
         $this->sendVerificationEmailAction->execute($user);
 
+        $token = $token->plainTextToken;
+        
         return [
             'user' => $user,
-            'token' => $token->plainTextToken,
+            'token' => $token,
         ];
     }
 }
