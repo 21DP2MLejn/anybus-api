@@ -1,0 +1,43 @@
+<?php
+
+namespace App\DTO\Auth;
+
+readonly class RegisterDTO
+{
+    public function __construct(
+        public string $name,
+        public string $email,
+        public string $password,
+    ) {
+    }
+
+    /**
+     * Create DTO from array.
+     *
+     * @param  array<string, mixed>  $data
+     * @return self
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            name: $data['name'],
+            email: $data['email'],
+            password: $data['password'],
+        );
+    }
+
+    /**
+     * Convert DTO to array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+    }
+}
+
