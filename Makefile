@@ -6,7 +6,7 @@ NETWORK_NAME=app-network
 # Start backend
 # ---------------------------
 up-backend:
-	docker compose -f docker-compose.yml up -d --build
+	docker compose -f docker-compose.yml up -d
 
 # Stop backend
 down-backend:
@@ -14,7 +14,7 @@ down-backend:
 
 # Start frontend
 up-frontend:
-	docker compose -f ../anybusdk/docker-compose.yml up -d --build
+	docker compose -f ../anybusdk/docker-compose.yml up -d
 
 # Stop frontend
 down-frontend:
