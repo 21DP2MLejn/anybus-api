@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Repositories\User\EloquentUserProfileRepository;
 use App\Repositories\User\EloquentUserRepository;
+use App\Repositories\User\EloquentUserSettingRepository;
+use App\Repositories\User\UserProfileRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\User\UserSettingRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -16,6 +20,16 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepositoryInterface::class,
             EloquentUserRepository::class
+        );
+
+        $this->app->bind(
+            UserProfileRepositoryInterface::class,
+            EloquentUserProfileRepository::class
+        );
+
+        $this->app->bind(
+            UserSettingRepositoryInterface::class,
+            EloquentUserSettingRepository::class
         );
     }
 
