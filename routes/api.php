@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ValidateResetTokenController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\User\UserSettingController;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 've
 
 // Password reset routes
 Route::post('/forgot-password', ForgotPasswordController::class);
+Route::post('/validate-reset-token', ValidateResetTokenController::class);
 Route::post('/reset-password', ResetPasswordController::class);
 
 // User profile routes
