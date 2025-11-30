@@ -24,9 +24,10 @@ class ResetPasswordController extends Controller
     public function __invoke(ResetPasswordRequest $request)
     {
         $validated = $request->validated();
-        $validated['password_confirmation'] = $request->input('password_confirmation');
-        
-        $dto = ResetPasswordDTO::fromArray($validated);
+        $data = $request->all();
+        $data['password_confirmation'] = $request->input('password_confirmation');
+
+        $dto = ResetPasswordDTO::fromArray($data);
         $status = $this->resetPasswordService->resetPassword($dto);
 
         if ($status !== Password::PASSWORD_RESET) {

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rules\Password;
 
 class ResetPasswordRequest extends FormRequest
@@ -23,10 +24,31 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'token' => ['required', 'string'],
+            'session_id' => ['required', 'string'],
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $sessionId = $this->input('session_id');
+        $sessionData = Cache::get($sessionId);
+
+        if (!$sessionData || !isset($sessionData['expires_at']) || now()->isAfter($sessionData['expires_at'])) {
+            // Invalid or expired session
+            return;
+        }
+
+        $this->merge([
+            'email' => $sessionData['email'],
+            'token' => $sessionData['token'],
+        ]);
+
+        // Clear the cache data after use for security
+        Cache::forget($sessionId);
     }
 }
 
