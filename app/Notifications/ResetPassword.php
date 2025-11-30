@@ -16,9 +16,9 @@ class ResetPassword extends ResetPasswordNotification
     {
         // This should point to your frontend reset password page
         // The token will be included in the URL
-        $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:3000'));
+        $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:3005'));
         
-        return $frontendUrl.'/reset-password?token='.$this->token.'&email='.urlencode($notifiable->getEmailForPasswordReset());
+        return $frontendUrl.'/reset-password/'.$this->token.'?email='.urlencode($notifiable->getEmailForPasswordReset());
     }
 }
 
