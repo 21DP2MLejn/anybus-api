@@ -3,6 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class ResetPassword extends ResetPasswordNotification
 {
@@ -14,11 +17,18 @@ class ResetPassword extends ResetPasswordNotification
      */
     protected function resetUrl($notifiable): string
     {
-        // This should point to your frontend reset password page
-        // The token will be included in the URL
+        $sessionId = Str::random(60);
+        
+        // Store session data in cache with 1 hour expiration
+        Cache::put($sessionId, [
+            'email' => $notifiable->getEmailForPasswordReset(),
+            'token' => $this->token,
+            'expires_at' => Carbon::now()->addHour(),
+        ], 3600);
+        
         $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:3005'));
         
-        return $frontendUrl.'/reset-password/'.$this->token.'?email='.urlencode($notifiable->getEmailForPasswordReset());
+        return $frontendUrl.'/reset-password/'.$sessionId;
     }
 }
 
