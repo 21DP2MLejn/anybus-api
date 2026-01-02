@@ -1,0 +1,47 @@
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Laravel Pint (PHP Code Style) - via Docker
+  - repo: local
+    hooks:
+      - id: laravel-pint
+        name: Laravel Pint
+        entry: |
+          bash -c 'echo "Running Laravel Pint..." && docker exec laravel vendor/bin/pint --test 2>&1 || (echo "ERROR: Laravel Pint found issues. Run: docker exec laravel vendor/bin/pint" && exit 1)'
+        language: system
+        files: \.php$
+        pass_filenames: false
+        always_run: false
+
+  # PHP Syntax Check
+  - repo: local
+    hooks:
+      - id: php-syntax-check
+        name: PHP Syntax Check
+        entry: |
+          bash -c 'for file in "$@"; do echo "Checking: $file"; file_path="/var/www/html/$file"; if docker exec laravel php -l "$file_path" 2>&1; then continue; elif php -l "$file" 2>&1; then continue; else echo "ERROR: Syntax error in: $file"; exit 1; fi; done' --
+        language: system
+        files: \.php$
+        pass_filenames: true
+
+  # Composer validation
+  - repo: local
+    hooks:
+      - id: composer-validate
+        name: Composer Validate
+        entry: |
+          bash -c 'echo "Validating composer.json..." && (docker exec laravel composer validate --no-check-publish 2>&1 || composer validate --no-check-publish 2>&1) || (echo "ERROR: Composer validation failed!" && exit 1)'
+        language: system
+        files: composer\.(json|lock)$
+        pass_filenames: false
