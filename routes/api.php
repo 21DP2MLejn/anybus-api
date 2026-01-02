@@ -7,6 +7,10 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ValidateResetTokenController;
+use App\Http\Controllers\Job\JobActionController;
+use App\Http\Controllers\Job\JobController;
+use App\Http\Controllers\Job\JobFeedController;
+use App\Http\Controllers\Job\SwipeJobController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\User\UserSettingController;
 use Illuminate\Http\Request;
@@ -44,4 +48,26 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/settings', [UserSettingController::class, 'show']);
     Route::post('/user/settings', [UserSettingController::class, 'store']);
+});
+
+// Job routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Job feed (worker only)
+    Route::get('/jobs/feed', [JobFeedController::class, 'index']);
+
+    // Job CRUD
+    Route::get('/jobs', [JobController::class, 'index']);
+    Route::post('/jobs', [JobController::class, 'store']);
+    Route::get('/jobs/{job}', [JobController::class, 'show']);
+
+    // Job actions
+    Route::post('/jobs/{job}/accept', [JobActionController::class, 'accept']);
+    Route::post('/jobs/{job}/investigate', [JobActionController::class, 'investigate']);
+    Route::post('/jobs/{job}/prepare', [JobActionController::class, 'prepare']);
+    Route::post('/jobs/{job}/start', [JobActionController::class, 'start']);
+    Route::post('/jobs/{job}/complete', [JobActionController::class, 'complete']);
+    Route::post('/jobs/{job}/cancel', [JobActionController::class, 'cancel']);
+
+    // Job swipe
+    Route::post('/jobs/{job}/swipe', [SwipeJobController::class, 'swipe']);
 });

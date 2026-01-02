@@ -61,8 +61,8 @@ first-install:
 	@echo "Starting backend..."
 	docker compose -f docker-compose.yml up -d --build
 
-	@echo "Waiting for MySQL to be ready..."
-	until docker exec mysql mysqladmin ping -h "localhost" --silent; do \
+	@echo "Waiting for PostgreSQL to be ready..."
+	until docker exec postgres pg_isready -U postgres > /dev/null 2>&1; do \
 		sleep 2; \
 	done
 
