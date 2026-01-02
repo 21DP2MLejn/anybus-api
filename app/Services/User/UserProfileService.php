@@ -9,8 +9,7 @@ class UserProfileService
 {
     public function __construct(
         private readonly UserProfileRepositoryInterface $userProfileRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Get user profile by user ID.
@@ -26,6 +25,7 @@ class UserProfileService
     public function createUserProfile(int $userId, array $data): UserProfile
     {
         $data['user_id'] = $userId;
+
         return $this->userProfileRepository->create($data);
     }
 
@@ -36,7 +36,7 @@ class UserProfileService
     {
         $profile = $this->userProfileRepository->findByUserId($userId);
 
-        if (!$profile) {
+        if (! $profile) {
             throw new \Exception('User profile not found.');
         }
 
@@ -50,7 +50,7 @@ class UserProfileService
     {
         $profile = $this->userProfileRepository->findByUserId($userId);
 
-        if (!$profile) {
+        if (! $profile) {
             throw new \Exception('User profile not found.');
         }
 

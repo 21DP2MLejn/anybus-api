@@ -13,8 +13,7 @@ class EmailVerificationController extends Controller
 
     public function __construct(
         private readonly EmailVerificationService $emailVerificationService
-    ) {
-    }
+    ) {}
 
     /**
      * Send email verification notification.
@@ -56,4 +55,3 @@ class EmailVerificationController extends Controller
         );
     }
 }
-

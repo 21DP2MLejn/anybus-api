@@ -3,7 +3,6 @@
 namespace App\Actions\Auth;
 
 use App\Models\User;
-use App\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class SendVerificationEmailAction
@@ -12,7 +11,6 @@ class SendVerificationEmailAction
      * Send email verification notification to the user.
      *
      * @param  User&MustVerifyEmail  $user
-     * @return void
      */
     public function execute(User $user): void
     {
@@ -23,4 +21,3 @@ class SendVerificationEmailAction
         $user->sendEmailVerificationNotification();
     }
 }
-

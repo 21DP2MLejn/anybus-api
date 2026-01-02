@@ -25,4 +25,3 @@ class EnsureEmailIsVerified
         return $next($request);
     }
 }
-

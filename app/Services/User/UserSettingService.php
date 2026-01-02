@@ -9,8 +9,7 @@ class UserSettingService
 {
     public function __construct(
         private readonly UserSettingRepositoryInterface $userSettingRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Get user settings by user ID.

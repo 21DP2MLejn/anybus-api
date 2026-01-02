@@ -9,14 +9,12 @@ readonly class ResetPasswordDTO
         public string $token,
         public string $password,
         public string $passwordConfirmation,
-    ) {
-    }
+    ) {}
 
     /**
      * Create DTO from array.
      *
      * @param  array<string, mixed>  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -43,4 +41,3 @@ readonly class ResetPasswordDTO
         ];
     }
 }
-

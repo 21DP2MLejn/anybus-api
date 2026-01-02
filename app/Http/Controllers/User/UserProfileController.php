@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserProfileRequest;
 use App\Http\Requests\User\UpdateUserProfileRequest;
 use App\Http\Resources\UserProfileResource;
-use App\Models\UserProfile;
 use App\Services\User\UserProfileService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +16,7 @@ class UserProfileController extends Controller
 
     public function __construct(
         private readonly UserProfileService $userProfileService
-    ) {
-    }
+    ) {}
 
     /**
      * Display the user's profile.
@@ -27,7 +25,7 @@ class UserProfileController extends Controller
     {
         $profile = $this->userProfileService->getUserProfile(auth()->id());
 
-        if (!$profile) {
+        if (! $profile) {
             return $this->errorResponse('Profile not found.', 404);
         }
 

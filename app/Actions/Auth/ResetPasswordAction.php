@@ -11,14 +11,10 @@ class ResetPasswordAction
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Reset the user's password.
-     *
-     * @param  ResetPasswordDTO  $dto
-     * @return string
      */
     public function execute(ResetPasswordDTO $dto): string
     {
@@ -39,4 +35,3 @@ class ResetPasswordAction
         return $status;
     }
 }
-

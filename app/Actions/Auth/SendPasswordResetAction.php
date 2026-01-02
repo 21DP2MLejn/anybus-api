@@ -9,9 +9,6 @@ class SendPasswordResetAction
 {
     /**
      * Send password reset notification to the user.
-     *
-     * @param  string  $email
-     * @return string
      */
     public function execute(string $email): string
     {
@@ -20,4 +17,3 @@ class SendPasswordResetAction
         return $status;
     }
 }
-

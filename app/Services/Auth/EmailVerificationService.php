@@ -11,14 +11,10 @@ class EmailVerificationService
     public function __construct(
         private readonly SendVerificationEmailAction $sendVerificationEmailAction,
         private readonly VerifyEmailAction $verifyEmailAction
-    ) {
-    }
+    ) {}
 
     /**
      * Send email verification notification.
-     *
-     * @param  User  $user
-     * @return void
      */
     public function sendVerificationEmail(User $user): void
     {
@@ -27,14 +23,9 @@ class EmailVerificationService
 
     /**
      * Verify the user's email address.
-     *
-     * @param  int  $userId
-     * @param  string  $hash
-     * @return bool
      */
     public function verifyEmail(int $userId, string $hash): bool
     {
         return $this->verifyEmailAction->execute($userId, $hash);
     }
 }
-

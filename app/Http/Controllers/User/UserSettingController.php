@@ -15,8 +15,7 @@ class UserSettingController extends Controller
 
     public function __construct(
         private readonly UserSettingService $userSettingService
-    ) {
-    }
+    ) {}
 
     /**
      * Display the user's settings.
@@ -25,7 +24,7 @@ class UserSettingController extends Controller
     {
         $settings = $this->userSettingService->getUserSettings(auth()->id());
 
-        if (!$settings) {
+        if (! $settings) {
             return $this->errorResponse('Settings not found.', 404);
         }
 

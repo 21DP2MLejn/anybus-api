@@ -15,8 +15,7 @@ class RegisterController extends Controller
 
     public function __construct(
         private readonly RegisterService $registerService
-    ) {
-    }
+    ) {}
 
     /**
      * Register a new user.
@@ -36,4 +35,3 @@ class RegisterController extends Controller
         );
     }
 }
-

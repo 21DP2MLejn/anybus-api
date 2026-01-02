@@ -7,7 +7,6 @@ use App\Actions\Auth\GenerateTokenAction;
 use App\Actions\Auth\SendVerificationEmailAction;
 use App\DTO\Auth\RegisterDTO;
 use App\Models\User;
-use Laravel\Sanctum\NewAccessToken;
 
 class RegisterService
 {
@@ -15,13 +14,11 @@ class RegisterService
         private readonly CreateUserAction $createUserAction,
         private readonly GenerateTokenAction $generateTokenAction,
         private readonly SendVerificationEmailAction $sendVerificationEmailAction
-    ) {
-    }
+    ) {}
 
     /**
      * Register a new user.
      *
-     * @param  RegisterDTO  $dto
      * @return array{user: User, token: string}
      */
     public function register(RegisterDTO $dto): array
@@ -32,11 +29,10 @@ class RegisterService
         $this->sendVerificationEmailAction->execute($user);
 
         $plainTextToken = $token->plainTextToken;
-        
+
         return [
             'user' => $user,
             'token' => $plainTextToken,
         ];
     }
 }
-

@@ -18,7 +18,7 @@ repos:
       - id: laravel-pint
         name: Laravel Pint
         entry: |
-          bash -c 'echo "Running Laravel Pint..." && docker exec laravel vendor/bin/pint --test 2>&1 || (echo "ERROR: Laravel Pint found issues. Run: docker exec laravel vendor/bin/pint" && exit 1)'
+          bash -c 'echo "Running Laravel Pint..." && if docker exec laravel test -f /var/www/html/vendor/bin/pint; then docker exec -w /var/www/html laravel vendor/bin/pint --test 2>&1 || (echo "ERROR: Laravel Pint found issues. Run: docker exec -w /var/www/html laravel vendor/bin/pint" && exit 1); else echo "WARNING: Laravel Pint not found. Skipping..." && exit 0; fi'
         language: system
         files: \.php$
         pass_filenames: false

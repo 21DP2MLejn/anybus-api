@@ -13,13 +13,11 @@ class LoginService
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
         private readonly GenerateTokenAction $generateTokenAction
-    ) {
-    }
+    ) {}
 
     /**
      * Authenticate a user and generate a token.
      *
-     * @param  LoginDTO  $dto
      * @return array{user: User, token: string}|null
      */
     public function login(LoginDTO $dto): ?array
@@ -38,4 +36,3 @@ class LoginService
         ];
     }
 }
-
