@@ -9,10 +9,6 @@ class VerifyEmailAction
 {
     /**
      * Verify the user's email address.
-     *
-     * @param  int  $userId
-     * @param  string  $hash
-     * @return bool
      */
     public function execute(int $userId, string $hash): bool
     {
@@ -39,4 +35,3 @@ class VerifyEmailAction
         return false;
     }
 }
-

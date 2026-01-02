@@ -7,14 +7,12 @@ readonly class RegisterDTO
     public function __construct(
         public string $email,
         public string $password,
-    ) {
-    }
+    ) {}
 
     /**
      * Create DTO from array.
      *
      * @param  array<string, mixed>  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -37,4 +35,3 @@ readonly class RegisterDTO
         ];
     }
 }
-

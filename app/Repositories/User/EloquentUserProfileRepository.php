@@ -28,6 +28,7 @@ class EloquentUserProfileRepository implements UserProfileRepositoryInterface
     public function update(UserProfile $profile, array $data): UserProfile
     {
         $profile->update($data);
+
         return $profile->fresh();
     }
 

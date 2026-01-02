@@ -37,7 +37,7 @@ class ResetPasswordRequest extends FormRequest
         $sessionId = $this->input('session_id');
         $sessionData = Cache::get($sessionId);
 
-        if (!$sessionData || !isset($sessionData['expires_at']) || now()->isAfter($sessionData['expires_at'])) {
+        if (! $sessionData || ! isset($sessionData['expires_at']) || now()->isAfter($sessionData['expires_at'])) {
             // Invalid or expired session
             return;
         }
@@ -51,4 +51,3 @@ class ResetPasswordRequest extends FormRequest
         Cache::forget($sessionId);
     }
 }
-

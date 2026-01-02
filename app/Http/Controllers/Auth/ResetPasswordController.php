@@ -15,8 +15,7 @@ class ResetPasswordController extends Controller
 
     public function __construct(
         private readonly ResetPasswordService $resetPasswordService
-    ) {
-    }
+    ) {}
 
     /**
      * Reset the user's password.
@@ -43,4 +42,3 @@ class ResetPasswordController extends Controller
         );
     }
 }
-

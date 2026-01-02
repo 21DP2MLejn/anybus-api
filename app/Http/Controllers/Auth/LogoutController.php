@@ -13,8 +13,7 @@ class LogoutController extends Controller
 
     public function __construct(
         private readonly LogoutService $logoutService
-    ) {
-    }
+    ) {}
 
     /**
      * Logout the authenticated user.
@@ -29,4 +28,3 @@ class LogoutController extends Controller
         );
     }
 }
-

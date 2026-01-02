@@ -24,7 +24,7 @@ class ValidateResetTokenController extends Controller
         // Find the user by email
         $user = User::where('email', $validated['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return $this->errorResponse(
                 'Invalid or expired password reset token.',
                 400
@@ -37,7 +37,7 @@ class ValidateResetTokenController extends Controller
             $validated['token']
         );
 
-        if (!$status) {
+        if (! $status) {
             return $this->errorResponse(
                 'Invalid or expired password reset token.',
                 400
@@ -45,7 +45,7 @@ class ValidateResetTokenController extends Controller
         }
 
         // Generate a temporary session identifier
-        $sessionId = 'reset_' . Str::random(40);
+        $sessionId = 'reset_'.Str::random(40);
 
         // Store validated reset data in cache with the temporary ID
         Cache::put($sessionId, [

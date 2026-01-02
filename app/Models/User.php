@@ -15,11 +15,15 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmail
 {
     const ROLE_CUSTOMER = 'customer';
+
     const ROLE_DRIVER = 'driver';
+
     const ROLE_ADMIN = 'admin';
 
     const STATUS_ACTIVE = 'active';
+
     const STATUS_SUSPENDED = 'suspended';
+
     const STATUS_DELETED = 'deleted';
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -27,8 +31,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Send the email verification notification.
-     *
-     * @return void
      */
     public function sendEmailVerificationNotification(): void
     {
@@ -39,7 +41,6 @@ class User extends Authenticatable implements MustVerifyEmail
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
     public function sendPasswordResetNotification($token): void
     {
@@ -113,9 +114,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Check if user has a specific role.
-     *
-     * @param string $role
-     * @return bool
      */
     public function hasRole(string $role): bool
     {
@@ -124,8 +122,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Check if user is active.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {

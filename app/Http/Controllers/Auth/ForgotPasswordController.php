@@ -15,8 +15,7 @@ class ForgotPasswordController extends Controller
 
     public function __construct(
         private readonly ForgotPasswordService $forgotPasswordService
-    ) {
-    }
+    ) {}
 
     /**
      * Send password reset link.
@@ -37,4 +36,3 @@ class ForgotPasswordController extends Controller
         );
     }
 }
-

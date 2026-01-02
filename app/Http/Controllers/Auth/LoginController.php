@@ -15,8 +15,7 @@ class LoginController extends Controller
 
     public function __construct(
         private readonly LoginService $loginService
-    ) {
-    }
+    ) {}
 
     /**
      * Authenticate a user and return a token.
@@ -42,4 +41,3 @@ class LoginController extends Controller
         );
     }
 }
-

@@ -1,4 +1,4 @@
-.PHONY: first-install up down restart build logs
+.PHONY: first-install up down restart build logs precommit-api precommit-nextjs precommit
 
 NETWORK_NAME=app-network
 
@@ -76,3 +76,20 @@ first-install:
 
 	@echo "Starting frontend..."
 	docker compose -f ../anybusdk/docker-compose.yml up -d --build
+
+# ---------------------------
+# Pre-commit hooks
+# ---------------------------
+# Run pre-commit hooks on staged files for API (Laravel)
+precommit-api:
+	@echo "Running pre-commit hooks for API (Laravel)..."
+	@cd /home/kristzz/anybus/anybus-api && pre-commit run
+
+# Run pre-commit hooks on staged files for Next.js
+precommit-nextjs:
+	@echo "Running pre-commit hooks for Next.js..."
+	@cd /home/kristzz/anybus/anybusdk && pre-commit run
+
+# Run pre-commit hooks on staged files for both repos
+precommit: precommit-api precommit-nextjs
+	@echo "Pre-commit hooks completed for both repositories."
