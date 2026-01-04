@@ -83,12 +83,12 @@ first-install:
 # Run pre-commit hooks on staged files for API (Laravel)
 precommit-api:
 	@echo "Running pre-commit hooks for API (Laravel)..."
-	@cd /home/kristzz/anybus/anybus-api && pre-commit run
+	@pre-commit run
 
 # Run pre-commit hooks on staged files for Next.js
 precommit-nextjs:
 	@echo "Running pre-commit hooks for Next.js..."
-	@cd /home/kristzz/anybus/anybusdk && pre-commit run
+	@cd ../anybusdk && pre-commit run
 
 # Run pre-commit hooks on staged files for both repos
 precommit: precommit-api precommit-nextjs
