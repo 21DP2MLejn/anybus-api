@@ -13,6 +13,11 @@ class EloquentUserRepository implements UserRepositoryInterface
      */
     public function create(array $data): User
     {
+        // Set default status if not provided
+        if (! isset($data['status'])) {
+            $data['status'] = User::STATUS_ACTIVE;
+        }
+
         return User::create($data);
     }
 

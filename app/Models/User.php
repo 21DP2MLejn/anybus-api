@@ -143,4 +143,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserSetting::class);
     }
+
+    /**
+     * Get the worker profile (if user is a driver).
+     */
+    public function worker(): HasOne
+    {
+        return $this->hasOne(Worker::class);
+    }
+
+    /**
+     * Check if user is a worker (driver).
+     */
+    public function isWorker(): bool
+    {
+        return $this->role === self::ROLE_DRIVER;
+    }
 }

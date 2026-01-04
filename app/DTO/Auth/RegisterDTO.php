@@ -7,6 +7,7 @@ readonly class RegisterDTO
     public function __construct(
         public string $email,
         public string $password,
+        public string $role = 'customer',
     ) {}
 
     /**
@@ -19,6 +20,7 @@ readonly class RegisterDTO
         return new self(
             email: $data['email'],
             password: $data['password'],
+            role: $data['role'] ?? 'customer',
         );
     }
 
@@ -32,6 +34,7 @@ readonly class RegisterDTO
         return [
             'email' => $this->email,
             'password' => $this->password,
+            'role' => $this->role,
         ];
     }
 }
