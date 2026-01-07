@@ -109,17 +109,11 @@ class JobTransitionCommand
      */
     private function performActionValidations(Job $job, User $actor, JobAction $action): void
     {
-        switch ($action) {
-            case JobAction::ACCEPT_JOB:
-                $this->validateAcceptJob($job, $actor);
-                break;
-            case JobAction::START_INVESTIGATION:
-            case JobAction::START_PREPARATION:
-            case JobAction::START_JOB:
-            case JobAction::COMPLETE_JOB:
-                $this->validateWorkerJob($job, $actor);
-                break;
-        }
+        match ($action) {
+            JobAction::ACCEPT_JOB => $this->validateAcceptJob($job, $actor),
+            JobAction::START_INVESTIGATION, JobAction::START_PREPARATION, JobAction::START_JOB, JobAction::COMPLETE_JOB => $this->validateWorkerJob($job, $actor),
+            default => null,
+        };
     }
 
     /**
@@ -157,25 +151,14 @@ class JobTransitionCommand
      */
     private function emitDomainEvents(Job $job, User $actor, JobAction $action): void
     {
-        switch ($action) {
-            case JobAction::ACCEPT_JOB:
-                event(new JobAccepted($job, $actor));
-                break;
-            case JobAction::START_INVESTIGATION:
-                event(new JobInvestigatingStarted($job, $actor));
-                break;
-            case JobAction::START_PREPARATION:
-                event(new JobPreparationStarted($job, $actor));
-                break;
-            case JobAction::START_JOB:
-                event(new JobStarted($job, $actor));
-                break;
-            case JobAction::COMPLETE_JOB:
-                event(new JobCompleted($job, $actor));
-                break;
-            case JobAction::CANCEL_JOB:
-                event(new JobCancelled($job, $actor));
-                break;
-        }
+        match ($action) {
+            JobAction::ACCEPT_JOB => event(new JobAccepted($job, $actor)),
+            JobAction::START_INVESTIGATION => event(new JobInvestigatingStarted($job, $actor)),
+            JobAction::START_PREPARATION => event(new JobPreparationStarted($job, $actor)),
+            JobAction::START_JOB => event(new JobStarted($job, $actor)),
+            JobAction::COMPLETE_JOB => event(new JobCompleted($job, $actor)),
+            JobAction::CANCEL_JOB => event(new JobCancelled($job, $actor)),
+            default => null,
+        };
     }
 }
