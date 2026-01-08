@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Commands\JobTransitionCommand;
+use App\Policies\JobStateTransitionPolicy;
 use App\Repositories\User\EloquentUserProfileRepository;
 use App\Repositories\User\EloquentUserRepository;
 use App\Repositories\User\EloquentUserSettingRepository;
@@ -31,6 +33,15 @@ class RepositoryServiceProvider extends ServiceProvider
             UserSettingRepositoryInterface::class,
             EloquentUserSettingRepository::class
         );
+
+        // Job transition system
+        $this->app->singleton(JobTransitionCommand::class, function ($app) {
+            return new JobTransitionCommand(
+                $app->make(JobStateTransitionPolicy::class)
+            );
+        });
+
+        $this->app->singleton(JobStateTransitionPolicy::class);
     }
 
     /**

@@ -23,7 +23,6 @@ class Job extends Model
         'price',
         'latitude',
         'longitude',
-        'status',
         'accepted_worker_id',
         'accepted_at',
     ];
@@ -64,6 +63,22 @@ class Job extends Model
     }
 
     /**
+     * Get all events for this job.
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(JobEvent::class, 'job_id');
+    }
+
+    /**
+     * Get the latest event for this job.
+     */
+    public function latestEvent()
+    {
+        return $this->hasOne(JobEvent::class, 'job_id')->latest();
+    }
+
+    /**
      * Scope a query to only include open jobs.
      */
     public function scopeOpen(Builder $query): Builder
@@ -90,6 +105,20 @@ class Job extends Model
         $point = 'ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography';
 
         return $query->whereRaw("ST_DWithin(location, $point, ?)", [$longitude, $latitude, $radiusMeters]);
+    }
+
+    /**
+     * Get the job status (derived from latest event).
+     */
+    public function getStatusAttribute(): JobStatus
+    {
+        // If there's a latest event, return its to_state
+        if ($this->latestEvent && $this->latestEvent->to_state) {
+            return $this->latestEvent->to_state;
+        }
+
+        // Default to OPEN for new jobs
+        return JobStatus::OPEN;
     }
 
     /**

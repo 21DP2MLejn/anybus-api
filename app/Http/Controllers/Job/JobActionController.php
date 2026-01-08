@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Job;
 
-use App\Actions\Job\AcceptJobAction;
-use App\Actions\Job\CancelJobAction;
-use App\Actions\Job\CompleteJobAction;
-use App\Actions\Job\InvestigateJobAction;
-use App\Actions\Job\PrepareJobAction;
-use App\Actions\Job\StartJobAction;
+use App\Commands\JobTransitionCommand;
+use App\Enums\JobAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AcceptJobRequest;
+use App\Http\Requests\JobTransitionRequest;
 use App\Http\Resources\JobResource;
 use App\Models\Job;
 use App\Traits\ApiResponse;
@@ -21,37 +17,13 @@ class JobActionController extends Controller
     use ApiResponse;
 
     public function __construct(
-        private readonly AcceptJobAction $acceptJobAction,
-        private readonly InvestigateJobAction $investigateJobAction,
-        private readonly PrepareJobAction $prepareJobAction,
-        private readonly StartJobAction $startJobAction,
-        private readonly CompleteJobAction $completeJobAction,
-        private readonly CancelJobAction $cancelJobAction
+        private readonly JobTransitionCommand $jobTransitionCommand
     ) {}
 
     /**
      * Accept a job.
      */
-    public function accept(Job $job, AcceptJobRequest $request): JsonResponse
-    {
-        $worker = $request->user()->worker;
-
-        if (! $worker) {
-            return $this->errorResponse('Worker profile not found.', 404);
-        }
-
-        $job = $this->acceptJobAction->execute($job, $worker);
-
-        return $this->successResponse(
-            new JobResource($job),
-            'Job accepted successfully.'
-        );
-    }
-
-    /**
-     * Start investigating a job.
-     */
-    public function investigate(Job $job, Request $request): JsonResponse
+    public function accept(Job $job, Request $request): JsonResponse
     {
         try {
             $worker = $request->user()->worker;
@@ -60,7 +32,34 @@ class JobActionController extends Controller
                 return $this->errorResponse('Worker profile not found.', 404);
             }
 
-            $job = $this->investigateJobAction->execute($job, $worker);
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::ACCEPT_JOB
+            );
+
+            return $this->successResponse(
+                new JobResource($job),
+                'Job accepted successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
+    }
+
+    /**
+     * Start investigating a job.
+     */
+    public function investigate(Job $job, JobTransitionRequest $request): JsonResponse
+    {
+        try {
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::START_INVESTIGATION,
+                $request->input('comment'),
+                $request->input('metadata', [])
+            );
 
             return $this->successResponse(
                 new JobResource($job),
@@ -74,16 +73,16 @@ class JobActionController extends Controller
     /**
      * Start preparing for a job.
      */
-    public function prepare(Job $job, Request $request): JsonResponse
+    public function prepare(Job $job, JobTransitionRequest $request): JsonResponse
     {
         try {
-            $worker = $request->user()->worker;
-
-            if (! $worker) {
-                return $this->errorResponse('Worker profile not found.', 404);
-            }
-
-            $job = $this->prepareJobAction->execute($job, $worker);
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::START_PREPARATION,
+                $request->input('comment'),
+                $request->input('metadata', [])
+            );
 
             return $this->successResponse(
                 new JobResource($job),
@@ -97,51 +96,69 @@ class JobActionController extends Controller
     /**
      * Start a job.
      */
-    public function start(Job $job, Request $request): JsonResponse
+    public function start(Job $job, JobTransitionRequest $request): JsonResponse
     {
-        $worker = $request->user()->worker;
+        try {
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::START_JOB,
+                $request->input('comment'),
+                $request->input('metadata', [])
+            );
 
-        if (! $worker) {
-            return $this->errorResponse('Worker profile not found.', 404);
+            return $this->successResponse(
+                new JobResource($job),
+                'Job started successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
         }
-
-        $job = $this->startJobAction->execute($job, $worker);
-
-        return $this->successResponse(
-            new JobResource($job),
-            'Job started successfully.'
-        );
     }
 
     /**
      * Complete a job.
      */
-    public function complete(Job $job, Request $request): JsonResponse
+    public function complete(Job $job, JobTransitionRequest $request): JsonResponse
     {
-        $worker = $request->user()->worker;
+        try {
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::COMPLETE_JOB,
+                $request->input('comment'),
+                $request->input('metadata', [])
+            );
 
-        if (! $worker) {
-            return $this->errorResponse('Worker profile not found.', 404);
+            return $this->successResponse(
+                new JobResource($job),
+                'Job completed successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
         }
-
-        $job = $this->completeJobAction->execute($job, $worker);
-
-        return $this->successResponse(
-            new JobResource($job),
-            'Job completed successfully.'
-        );
     }
 
     /**
      * Cancel a job.
      */
-    public function cancel(Job $job, Request $request): JsonResponse
+    public function cancel(Job $job, JobTransitionRequest $request): JsonResponse
     {
-        $job = $this->cancelJobAction->execute($job, $request->user());
+        try {
+            $job = $this->jobTransitionCommand->execute(
+                $job,
+                $request->user(),
+                JobAction::CANCEL_JOB,
+                $request->input('comment'),
+                $request->input('metadata', [])
+            );
 
-        return $this->successResponse(
-            new JobResource($job),
-            'Job cancelled successfully.'
-        );
+            return $this->successResponse(
+                new JobResource($job),
+                'Job cancelled successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
     }
 }
