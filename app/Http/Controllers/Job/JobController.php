@@ -46,6 +46,7 @@ class JobController extends Controller
      */
     public function show(Job $job): JsonResponse
     {
+        $job->load('customer');
         return $this->successResponse(
             new JobResource($job),
             'Job retrieved successfully.'

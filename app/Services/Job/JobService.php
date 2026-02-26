@@ -14,7 +14,9 @@ class JobService
     public function getUserJobs(User $user): LengthAwarePaginator
     {
         if ($user->hasRole('customer')) {
-            return Job::where('customer_id', $user->id)->paginate();
+            return Job::where('customer_id', $user->id)
+                ->with('customer')
+                ->paginate();
         }
 
         if ($user->isWorker() && $user->worker) {
