@@ -18,6 +18,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const ROLE_DRIVER = 'driver';
 
+    const ROLE_WORKER = 'worker';
+
     const ROLE_ADMIN = 'admin';
 
     const STATUS_ACTIVE = 'active';
@@ -157,6 +159,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isWorker(): bool
     {
-        return $this->role === self::ROLE_DRIVER;
+        return $this->role === self::ROLE_DRIVER || $this->role === self::ROLE_WORKER;
     }
 }

@@ -6,6 +6,7 @@ use App\Actions\Job\CreateJobAction;
 use App\DTO\Job\CreateJobDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateJobRequest;
+use App\Http\Requests\CreateWorkerJobRequest;
 use App\Http\Resources\JobResource;
 use App\Models\Job;
 use App\Services\Job\JobService;
@@ -42,6 +43,54 @@ class JobController extends Controller
     }
 
     /**
+     * Create a new worker advertisement.
+     */
+    public function storeWorkerAd(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        if (!$user->isWorker() || !$user->worker) {
+            return $this->errorResponse('Only workers can create worker advertisements.', 403);
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'category' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'contact' => ['required', 'string', 'max:255'],
+        ]);
+
+        $job = \App\Models\Job::create([
+            'customer_id' => $user->id, 
+            'accepted_worker_id' => $user->worker->id, 
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category' => $validated['category'],
+            'price' => $validated['price'],
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'status' => 'open', 
+        ]);
+        
+        \App\Models\JobEvent::create([
+            'job_id' => $job->id,
+            'actor_user_id' => $user->id,
+            'action' => \App\Enums\JobAction::ACCEPT_JOB->value,
+            'from_state' => \App\Enums\JobStatus::OPEN->value,
+            'to_state' => \App\Enums\JobStatus::OPEN->value,
+        ]);
+
+        return $this->successResponse(
+            new JobResource($job),
+            'Worker advertisement created successfully.',
+            201
+        );
+    }
+
+    /**
      * Display the specified job.
      */
     public function show(Job $job): JsonResponse
@@ -54,11 +103,29 @@ class JobController extends Controller
     }
 
     /**
+     * List all public jobs/advertisements.
+     */
+    public function allJobs(): JsonResponse
+    {
+        $jobs = $this->jobService->getAllJobs();
+
+        return $this->successResponse(
+            JobResource::collection($jobs),
+            'All jobs retrieved successfully.'
+        );
+    }
+
+    /**
      * List user's jobs (customer or worker).
      */
     public function index(Request $request): JsonResponse
     {
-        $jobs = $this->jobService->getUserJobs($request->user());
+        // Check if user wants all jobs (for public view)
+        if ($request->get('all') === 'true') {
+            $jobs = $this->jobService->getAllJobs();
+        } else {
+            $jobs = $this->jobService->getUserJobs($request->user());
+        }
 
         return $this->successResponse(
             JobResource::collection($jobs),

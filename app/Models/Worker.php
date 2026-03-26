@@ -31,7 +31,15 @@ class Worker extends Model
     }
 
     /**
-     * Get the user that owns the worker profile.
+     * Get the jobs accepted by this worker.
+     */
+    public function acceptedJobs(): HasMany
+    {
+        return $this->hasMany(Job::class, 'accepted_worker_id');
+    }
+
+    /**
+     * Get the worker profile (if user is a driver).
      */
     public function user(): BelongsTo
     {
@@ -44,14 +52,6 @@ class Worker extends Model
     public function skills(): HasMany
     {
         return $this->hasMany(WorkerSkill::class);
-    }
-
-    /**
-     * Get all jobs accepted by this worker.
-     */
-    public function acceptedJobs(): HasMany
-    {
-        return $this->hasMany(Job::class, 'accepted_worker_id');
     }
 
     /**

@@ -30,8 +30,8 @@ class JobResource extends JsonResource
             'updated_at' => $this->updated_at->toISOString(),
         ];
 
-        // Only include accepted_worker if job is matched, in_progress, or completed
-        if (in_array($this->status->value, ['matched', 'in_progress', 'completed'])) {
+        // Include accepted_worker if job has one assigned (for worker ads)
+        if ($this->accepted_worker_id) {
             $data['accepted_worker'] = new WorkerResource($this->whenLoaded('acceptedWorker'));
             $data['accepted_at'] = $this->accepted_at?->toISOString();
         }

@@ -16,9 +16,13 @@ class WorkerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => new UserResource($this->whenLoaded('user')),
+            'name' => $this->user->name ?? 'Worker ' . $this->id,
+            'email' => $this->user->email,
             'rating' => $this->rating,
             'availability_status' => $this->availability_status,
+            'total_jobs' => $this->whenLoaded('acceptedJobs', function () {
+                return $this->acceptedJobs->count();
+            }) ?? $this->acceptedJobs()->count(),
             'skills' => $this->whenLoaded('skills', function () {
                 return $this->skills->pluck('skill');
             }),

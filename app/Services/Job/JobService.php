@@ -9,6 +9,16 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class JobService
 {
     /**
+     * Get all public jobs/advertisements.
+     */
+    public function getAllJobs(): LengthAwarePaginator
+    {
+        return Job::with('customer', 'acceptedWorker.user', 'acceptedWorker.acceptedJobs')
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+    }
+
+    /**
      * Get jobs for a user (customer or worker).
      */
     public function getUserJobs(User $user): LengthAwarePaginator
