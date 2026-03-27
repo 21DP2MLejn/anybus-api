@@ -66,6 +66,7 @@ class JobController extends Controller
         $job = \App\Models\Job::create([
             'customer_id' => $user->id, 
             'accepted_worker_id' => $user->worker->id, 
+            'ad_type' => 'worker',
             'title' => $validated['title'],
             'description' => $validated['description'],
             'category' => $validated['category'],
@@ -93,9 +94,28 @@ class JobController extends Controller
     /**
      * Display the specified job.
      */
-    public function show(Job $job): JsonResponse
+    public function show(Job $job, Request $request): JsonResponse
     {
-        $job->load('customer');
+        $user = $request->user();
+
+        // Enforce role-based visibility for "browsing" (defense-in-depth).
+        // Always allow:
+        // - owner (customer_id)
+        // - accepted worker
+        // - admin
+        $isOwner = $job->customer_id === $user->id;
+        $isAcceptedWorker = $user->isWorker() && $user->worker && $job->accepted_worker_id === $user->worker->id;
+        $isAdmin = $user->hasRole('admin');
+
+        $canBrowseByRole =
+            ($user->hasRole(\App\Models\User::ROLE_CUSTOMER) && $job->ad_type === 'worker') ||
+            ($user->isWorker() && $job->ad_type === 'customer');
+
+        if (! ($isOwner || $isAcceptedWorker || $isAdmin || $canBrowseByRole)) {
+            return $this->errorResponse('You are not authorized to view this advertisement.', 403);
+        }
+
+        $job->load('customer', 'acceptedWorker.user');
         return $this->successResponse(
             new JobResource($job),
             'Job retrieved successfully.'
@@ -105,9 +125,9 @@ class JobController extends Controller
     /**
      * List all public jobs/advertisements.
      */
-    public function allJobs(): JsonResponse
+    public function allJobs(Request $request): JsonResponse
     {
-        $jobs = $this->jobService->getAllJobs();
+        $jobs = $this->jobService->getAllJobs($request->user());
 
         return $this->successResponse(
             JobResource::collection($jobs),
@@ -122,7 +142,7 @@ class JobController extends Controller
     {
         // Check if user wants all jobs (for public view)
         if ($request->get('all') === 'true') {
-            $jobs = $this->jobService->getAllJobs();
+            $jobs = $this->jobService->getAllJobs($request->user());
         } else {
             $jobs = $this->jobService->getUserJobs($request->user());
         }

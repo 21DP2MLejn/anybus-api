@@ -17,6 +17,7 @@ class CreateJobAction
         return DB::transaction(function () use ($dto) {
             $job = Job::create([
                 'customer_id' => $dto->customer_id,
+                'ad_type' => 'customer',
                 'title' => $dto->title,
                 'description' => $dto->description,
                 'category' => $dto->category,

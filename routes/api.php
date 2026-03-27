@@ -50,13 +50,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/settings', [UserSettingController::class, 'store']);
 });
 
+// Job listing route (authenticated; role-filtered)
+Route::get('/jobs/all', [JobController::class, 'allJobs'])->middleware('auth:sanctum');
+
 // Job routes
 Route::middleware('auth:sanctum')->group(function () {
     // Job feed (worker only)
     Route::get('/jobs/feed', [JobFeedController::class, 'index']);
 
     // Job CRUD
-    Route::get('/jobs/all', [JobController::class, 'allJobs']); // Get all public advertisements
     Route::get('/jobs', [JobController::class, 'index']); // Get user's own advertisements
     Route::post('/jobs', [JobController::class, 'store']); // Create customer advertisement
     Route::post('/jobs/worker-ad', [JobController::class, 'storeWorkerAd']); // Create worker advertisement

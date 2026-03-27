@@ -16,6 +16,7 @@ class JobResource extends JsonResource
     {
         $data = [
             'id' => $this->id,
+            'ad_type' => $this->ad_type,
             'title' => $this->title,
             'description' => $this->description,
             'category' => $this->category,
