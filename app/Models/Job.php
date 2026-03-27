@@ -17,6 +17,7 @@ class Job extends Model
 
     protected $fillable = [
         'customer_id',
+        'ad_type',
         'title',
         'description',
         'category',

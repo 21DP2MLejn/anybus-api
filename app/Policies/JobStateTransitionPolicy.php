@@ -71,6 +71,12 @@ class JobStateTransitionPolicy
     {
         $userRole = $this->getUserRole($user, $job);
 
+        // Workers should only be able to act on customer-made advertisements.
+        // (Worker-made ads are "service offerings" and should not be accepted/swiped/processed as jobs.)
+        if ($userRole === 'worker' && $job->ad_type === 'worker') {
+            return false;
+        }
+
         // Check if the user's role is allowed to perform this action
         if (! in_array($action, self::ROLE_PERMISSIONS[$userRole] ?? [])) {
             return false;

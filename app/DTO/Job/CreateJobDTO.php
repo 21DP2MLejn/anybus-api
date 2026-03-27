@@ -12,6 +12,7 @@ class CreateJobDTO
         public readonly float $price,
         public readonly float $latitude,
         public readonly float $longitude,
+        public readonly ?int $accepted_worker_id
     ) {}
 
     /**
@@ -27,6 +28,7 @@ class CreateJobDTO
             price: (float) $data['price'],
             latitude: (float) $data['latitude'],
             longitude: (float) $data['longitude'],
+            accepted_worker_id: $data['accepted_worker_id'] ?? null,
         );
     }
 
@@ -43,6 +45,7 @@ class CreateJobDTO
             'price' => $this->price,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
+            'accepted_worker_id' => $this->accepted_worker_id,
         ];
     }
 }
