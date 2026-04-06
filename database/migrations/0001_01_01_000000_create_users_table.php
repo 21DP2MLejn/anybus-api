@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->rememberToken();
             $table->string('role')->default('customer'); // customer, driver, admin
             $table->string('status')->default('active'); // active, suspended, deleted
             $table->string('stripe_customer_id')->nullable();
