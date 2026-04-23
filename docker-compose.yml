@@ -8,19 +8,34 @@ services:
     volumes:
       - .:/var/www/html          # Laravel files directly in anybus-api/
     environment:
+      APP_NAME: Laravel
       APP_ENV: local
+      APP_KEY: base64:GENERATE_A_NEW_KEY_FOR_PRODUCTION
       APP_DEBUG: "true"
-      APP_KEY: base64:GENERATE_THIS_KEY
+      APP_URL: http://localhost
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: laravel
       DB_USERNAME: postgres
       DB_PASSWORD: secret
+      CACHE_STORE: database
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-      REDIS_PORT: 6379
+      MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
+      BROADCAST_CONNECTION: reverb
+      REVERB_APP_ID: anybus
+      REVERB_APP_KEY: anybus-key
+      REVERB_APP_SECRET: anybus-secret
+      REVERB_HOST: reverb
+      REVERB_PORT: 8080
+      REVERB_SCHEME: http
+      GEOLOCATION_PRUNE_ENABLED: "true"
+      GEOLOCATION_PRUNE_DAYS: 7
     depends_on:
       - postgres
       - redis
@@ -73,6 +88,45 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - app-network
+
+  reverb:
+    build: .
+    container_name: reverb
+    restart: unless-stopped
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    volumes:
+      - .:/var/www/html
+    environment:
+      # Docker-specific overrides
+      REVERB_SERVER_HOST: 0.0.0.0
+      REVERB_SERVER_PORT: 8080
+      APP_NAME: Laravel
+      APP_ENV: local
+      APP_KEY: base64:GENERATE_A_NEW_KEY_FOR_PRODUCTION
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: laravel
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+      CACHE_STORE: database
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      BROADCAST_CONNECTION: reverb
+      REVERB_APP_ID: anybus
+      REVERB_APP_KEY: anybus-key
+      REVERB_APP_SECRET: anybus-secret
+      REVERB_HOST: reverb
+      REVERB_PORT: 8080
+      REVERB_SCHEME: http
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
     networks:
       - app-network
 

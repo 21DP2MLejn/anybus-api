@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Auth\LoginService;
 use App\Traits\ApiResponse;
+use OpenApi\Attributes as OA;
 
 class LoginController extends Controller
 {
@@ -17,9 +18,37 @@ class LoginController extends Controller
         private readonly LoginService $loginService
     ) {}
 
-    /**
-     * Authenticate a user and return a token.
-     */
+    #[OA\Post(
+        path: '/login',
+        summary: 'Authenticate a user and return a token',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'password'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Login successful',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'string', example: 'success'),
+                        new OA\Property(property: 'data', properties: [
+                            new OA\Property(property: 'user', type: 'object'),
+                            new OA\Property(property: 'token', type: 'string'),
+                        ]),
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Invalid credentials'),
+        ]
+    )]
     public function __invoke(LoginRequest $request)
     {
         $dto = LoginDTO::fromArray($request->validated());

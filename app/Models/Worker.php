@@ -18,6 +18,7 @@ class Worker extends Model
         'availability_status',
         'latitude',
         'longitude',
+        'last_location_at',
     ];
 
     protected function casts(): array
@@ -27,6 +28,7 @@ class Worker extends Model
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'availability_status' => 'string',
+            'last_location_at' => 'datetime',
         ];
     }
 
@@ -52,6 +54,14 @@ class Worker extends Model
     public function acceptedJobs(): HasMany
     {
         return $this->hasMany(Job::class, 'accepted_worker_id');
+    }
+
+    /**
+     * Get location history for this worker.
+     */
+    public function locationHistory(): HasMany
+    {
+        return $this->hasMany(WorkerLocationHistory::class);
     }
 
     /**

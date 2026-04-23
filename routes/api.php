@@ -7,12 +7,14 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ValidateResetTokenController;
+use App\Http\Controllers\Job\DriverLocationController;
 use App\Http\Controllers\Job\JobActionController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\Job\JobFeedController;
 use App\Http\Controllers\Job\SwipeJobController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\User\UserSettingController;
+use App\Http\Controllers\Worker\WorkerLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -70,4 +72,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Job swipe
     Route::post('/jobs/{job}/swipe', [SwipeJobController::class, 'swipe']);
+
+    // Driver location (for customers)
+    Route::get('/jobs/{job}/driver-location', [DriverLocationController::class, 'show']);
+    Route::get('/jobs/{job}/route', [DriverLocationController::class, 'route']);
+});
+
+// Worker routes
+Route::middleware(['auth:sanctum', 'throttle:12,1'])->prefix('worker')->group(function () {
+    Route::post('/location', [WorkerLocationController::class, 'update']);
 });

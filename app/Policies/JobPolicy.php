@@ -75,4 +75,22 @@ class JobPolicy
         return $user->isWorker()
             && $job->status === JobStatus::OPEN;
     }
+
+    /**
+     * Determine if the user can view the driver's location for this job.
+     */
+    public function viewDriverLocation(User $user, Job $job): bool
+    {
+        return $job->customer_id === $user->id
+            && $job->status === JobStatus::IN_PROGRESS;
+    }
+
+    /**
+     * Determine if the user can view the driver's route history for this job.
+     */
+    public function viewRoute(User $user, Job $job): bool
+    {
+        return $job->customer_id === $user->id
+            && in_array($job->status, [JobStatus::IN_PROGRESS, JobStatus::COMPLETED]);
+    }
 }

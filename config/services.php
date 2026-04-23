@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'geolocation' => [
+        'prune_enabled' => env('GEOLOCATION_PRUNE_ENABLED', true),
+        'prune_days' => env('GEOLOCATION_PRUNE_DAYS', 7),
+    ],
+
 ];

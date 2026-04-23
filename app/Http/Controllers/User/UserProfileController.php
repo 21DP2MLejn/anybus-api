@@ -9,6 +9,7 @@ use App\Http\Resources\UserProfileResource;
 use App\Services\User\UserProfileService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
 class UserProfileController extends Controller
 {
@@ -18,9 +19,16 @@ class UserProfileController extends Controller
         private readonly UserProfileService $userProfileService
     ) {}
 
-    /**
-     * Display the user's profile.
-     */
+    #[OA\Get(
+        path: '/user/profile',
+        summary: "Display the user's profile",
+        security: [['sanctum' => []]],
+        tags: ['User Profile'],
+        responses: [
+            new OA\Response(response: 200, description: 'Profile retrieved successfully'),
+            new OA\Response(response: 404, description: 'Profile not found'),
+        ]
+    )]
     public function show(): JsonResponse
     {
         $profile = $this->userProfileService->getUserProfile(auth()->id());
@@ -35,9 +43,25 @@ class UserProfileController extends Controller
         );
     }
 
-    /**
-     * Store a new user profile.
-     */
+    #[OA\Post(
+        path: '/user/profile',
+        summary: 'Store a new user profile',
+        security: [['sanctum' => []]],
+        tags: ['User Profile'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                    new OA\Property(property: 'phone', type: 'string', example: '+3725555555'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Profile created successfully'),
+        ]
+    )]
     public function store(StoreUserProfileRequest $request): JsonResponse
     {
         $profile = $this->userProfileService->createUserProfile(
@@ -52,9 +76,24 @@ class UserProfileController extends Controller
         );
     }
 
-    /**
-     * Update the user's profile.
-     */
+    #[OA\Put(
+        path: '/user/profile',
+        summary: "Update the user's profile",
+        security: [['sanctum' => []]],
+        tags: ['User Profile'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Profile updated successfully'),
+        ]
+    )]
     public function update(UpdateUserProfileRequest $request): JsonResponse
     {
         $profile = $this->userProfileService->updateUserProfile(
@@ -68,9 +107,15 @@ class UserProfileController extends Controller
         );
     }
 
-    /**
-     * Delete the user's profile.
-     */
+    #[OA\Delete(
+        path: '/user/profile',
+        summary: "Delete the user's profile",
+        security: [['sanctum' => []]],
+        tags: ['User Profile'],
+        responses: [
+            new OA\Response(response: 200, description: 'Profile deleted successfully'),
+        ]
+    )]
     public function destroy(): JsonResponse
     {
         $this->userProfileService->deleteUserProfile(auth()->id());

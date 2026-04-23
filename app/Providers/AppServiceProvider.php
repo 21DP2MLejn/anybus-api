@@ -11,6 +11,8 @@ use App\Listeners\SendJobCancelledNotification;
 use App\Listeners\SendJobCompletedNotification;
 use App\Listeners\SendJobStartedNotification;
 use App\Listeners\UpdateWorkerRating;
+use App\Models\User;
+use App\Models\Worker;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +31,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Auto-create worker profile when a user with driver role is created
+        User::created(function (User $user) {
+            if ($user->role === User::ROLE_DRIVER) {
+                Worker::create(['user_id' => $user->id]);
+            }
+        });
+
         // Register event listeners
         Event::listen(JobAccepted::class, SendJobAcceptedNotification::class);
         Event::listen(JobInvestigatingStarted::class, SendJobInvestigatingNotification::class);
